@@ -1,0 +1,135 @@
+
+
+============================== 2022-11-18 17:38:55.587483 | b77c0efa-7174-4903-8b83-2784cef4c7a4 ==============================
+[0m17:38:55.587489 [info ] [MainThread]: Running with dbt=1.3.1
+[0m17:38:55.587688 [debug] [MainThread]: running dbt with arguments {'write_json': True, 'use_colors': True, 'printer_width': 80, 'version_check': True, 'partial_parse': True, 'static_parser': True, 'profiles_dir': '/Users/isit/.dbt', 'send_anonymous_usage_stats': True, 'event_buffer_size': 100000, 'quiet': False, 'no_print': False, 'project_name': 'take_home', 'skip_profile_setup': False, 'which': 'init', 'indirect_selection': 'eager'}
+[0m17:38:55.587757 [debug] [MainThread]: Tracking: tracking
+[0m17:38:55.606780 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106e2ec20>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106e2ea10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106e2f0d0>]}
+[0m17:38:55.607293 [info ] [MainThread]: Creating dbt configuration folder at /Users/isit/.dbt
+[0m17:38:55.608644 [debug] [MainThread]: Starter project path: /opt/homebrew/lib/python3.10/site-packages/dbt/include/starter_project
+[0m17:39:00.810747 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106e2ddb0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106e2dc00>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106e2f730>]}
+[0m17:39:00.810932 [debug] [MainThread]: Flushing usage events
+[0m17:39:01.170449 [error] [MainThread]: Encountered an error:
+dlopen(/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so, 0x0002): tried: '/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (no such file), '/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64'))
+[0m17:39:01.177689 [error] [MainThread]: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/main.py", line 135, in main
+    results, succeeded = handle_and_check(args)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/main.py", line 198, in handle_and_check
+    task, res = run_from_args(parsed)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/main.py", line 245, in run_from_args
+    results = task.run()
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/task/init.py", line 332, in run
+    self.create_profile_from_target(adapter, profile_name=project_name)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/task/init.py", line 200, in create_profile_from_target
+    load_plugin(adapter)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/factory.py", line 201, in load_plugin
+    return FACTORY.load_plugin(name)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/factory.py", line 56, in load_plugin
+    mod: Any = import_module("." + name, "dbt.adapters")
+  File "/opt/homebrew/Cellar/python@3.10/3.10.8/Frameworks/Python.framework/Versions/3.10/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/bigquery/__init__.py", line 5, in <module>
+    from dbt.adapters.bigquery.impl import BigQueryAdapter, GrantTarget  # noqa
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/bigquery/impl.py", line 24, in <module>
+    from dbt.adapters.bigquery.python_submissions import (
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/bigquery/python_submissions.py", line 8, in <module>
+    from google.cloud import storage, dataproc_v1  # type: ignore
+  File "/opt/homebrew/lib/python3.10/site-packages/google/cloud/dataproc_v1/__init__.py", line 17, in <module>
+    from .services.autoscaling_policy_service import AutoscalingPolicyServiceClient
+  File "/opt/homebrew/lib/python3.10/site-packages/google/cloud/dataproc_v1/services/autoscaling_policy_service/__init__.py", line 16, in <module>
+    from .client import AutoscalingPolicyServiceClient
+  File "/opt/homebrew/lib/python3.10/site-packages/google/cloud/dataproc_v1/services/autoscaling_policy_service/client.py", line 24, in <module>
+    from google.api_core import gapic_v1
+  File "/opt/homebrew/lib/python3.10/site-packages/google/api_core/gapic_v1/__init__.py", line 16, in <module>
+    from google.api_core.gapic_v1 import config
+  File "/opt/homebrew/lib/python3.10/site-packages/google/api_core/gapic_v1/config.py", line 23, in <module>
+    import grpc
+  File "/opt/homebrew/lib/python3.10/site-packages/grpc/__init__.py", line 22, in <module>
+    from grpc import _compression
+  File "/opt/homebrew/lib/python3.10/site-packages/grpc/_compression.py", line 15, in <module>
+    from grpc._cython import cygrpc
+ImportError: dlopen(/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so, 0x0002): tried: '/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (no such file), '/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64'))
+
+
+
+============================== 2022-11-18 17:42:38.495132 | e65f14de-e8ee-4186-a12e-587ee02faa7f ==============================
+[0m17:42:38.495138 [info ] [MainThread]: Running with dbt=1.3.1
+[0m17:42:38.495581 [debug] [MainThread]: running dbt with arguments {'write_json': True, 'use_colors': True, 'printer_width': 80, 'version_check': True, 'partial_parse': True, 'static_parser': True, 'profiles_dir': '/Users/isit/.dbt', 'send_anonymous_usage_stats': True, 'event_buffer_size': 100000, 'quiet': False, 'no_print': False, 'project_name': 'take_home', 'skip_profile_setup': False, 'which': 'init', 'indirect_selection': 'eager'}
+[0m17:42:38.495662 [debug] [MainThread]: Tracking: tracking
+[0m17:42:38.511477 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105a5be50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105a5b8b0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105a5a7d0>]}
+[0m17:42:38.512439 [info ] [MainThread]: A project called take_home already exists here.
+[0m17:42:38.512608 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105a5b5b0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105a5b3d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105a5b8b0>]}
+[0m17:42:38.512712 [debug] [MainThread]: Flushing usage events
+
+
+============================== 2022-11-18 17:43:57.367664 | 3fbfbdb0-9f48-4187-bfd5-8a5165220591 ==============================
+[0m17:43:57.367670 [info ] [MainThread]: Running with dbt=1.3.1
+[0m17:43:57.368007 [debug] [MainThread]: running dbt with arguments {'write_json': True, 'use_colors': True, 'printer_width': 80, 'version_check': True, 'partial_parse': True, 'static_parser': True, 'profiles_dir': '/Users/isit/.dbt', 'send_anonymous_usage_stats': True, 'event_buffer_size': 100000, 'quiet': False, 'no_print': False, 'project_name': 'b_and_b', 'skip_profile_setup': False, 'which': 'init', 'indirect_selection': 'eager'}
+[0m17:43:57.368090 [debug] [MainThread]: Tracking: tracking
+[0m17:43:57.385580 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1048ffa60>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1048ff610>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1048ff8e0>]}
+[0m17:43:57.386503 [debug] [MainThread]: Starter project path: /opt/homebrew/lib/python3.10/site-packages/dbt/include/starter_project
+[0m17:43:59.247843 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1048ff490>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1048ff400>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1048ff550>]}
+[0m17:43:59.248041 [debug] [MainThread]: Flushing usage events
+[0m17:43:59.593956 [error] [MainThread]: Encountered an error:
+dlopen(/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so, 0x0002): tried: '/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (no such file), '/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64'))
+[0m17:43:59.603074 [error] [MainThread]: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/main.py", line 135, in main
+    results, succeeded = handle_and_check(args)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/main.py", line 198, in handle_and_check
+    task, res = run_from_args(parsed)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/main.py", line 245, in run_from_args
+    results = task.run()
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/task/init.py", line 332, in run
+    self.create_profile_from_target(adapter, profile_name=project_name)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/task/init.py", line 200, in create_profile_from_target
+    load_plugin(adapter)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/factory.py", line 201, in load_plugin
+    return FACTORY.load_plugin(name)
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/factory.py", line 56, in load_plugin
+    mod: Any = import_module("." + name, "dbt.adapters")
+  File "/opt/homebrew/Cellar/python@3.10/3.10.8/Frameworks/Python.framework/Versions/3.10/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/bigquery/__init__.py", line 5, in <module>
+    from dbt.adapters.bigquery.impl import BigQueryAdapter, GrantTarget  # noqa
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/bigquery/impl.py", line 24, in <module>
+    from dbt.adapters.bigquery.python_submissions import (
+  File "/opt/homebrew/lib/python3.10/site-packages/dbt/adapters/bigquery/python_submissions.py", line 8, in <module>
+    from google.cloud import storage, dataproc_v1  # type: ignore
+  File "/opt/homebrew/lib/python3.10/site-packages/google/cloud/dataproc_v1/__init__.py", line 17, in <module>
+    from .services.autoscaling_policy_service import AutoscalingPolicyServiceClient
+  File "/opt/homebrew/lib/python3.10/site-packages/google/cloud/dataproc_v1/services/autoscaling_policy_service/__init__.py", line 16, in <module>
+    from .client import AutoscalingPolicyServiceClient
+  File "/opt/homebrew/lib/python3.10/site-packages/google/cloud/dataproc_v1/services/autoscaling_policy_service/client.py", line 24, in <module>
+    from google.api_core import gapic_v1
+  File "/opt/homebrew/lib/python3.10/site-packages/google/api_core/gapic_v1/__init__.py", line 16, in <module>
+    from google.api_core.gapic_v1 import config
+  File "/opt/homebrew/lib/python3.10/site-packages/google/api_core/gapic_v1/config.py", line 23, in <module>
+    import grpc
+  File "/opt/homebrew/lib/python3.10/site-packages/grpc/__init__.py", line 22, in <module>
+    from grpc import _compression
+  File "/opt/homebrew/lib/python3.10/site-packages/grpc/_compression.py", line 15, in <module>
+    from grpc._cython import cygrpc
+ImportError: dlopen(/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so, 0x0002): tried: '/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (no such file), '/opt/homebrew/lib/python3.10/site-packages/grpc/_cython/cygrpc.cpython-310-darwin.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64'))
+
+
+
+============================== 2022-11-18 17:45:17.669290 | 2a84d895-6611-4d8e-b7a8-c5f2d5bd79bc ==============================
+[0m17:45:17.669296 [info ] [MainThread]: Running with dbt=1.3.1
+[0m17:45:17.669717 [debug] [MainThread]: running dbt with arguments {'write_json': True, 'use_colors': True, 'printer_width': 80, 'version_check': True, 'partial_parse': True, 'static_parser': True, 'profiles_dir': '/Users/isit/.dbt', 'send_anonymous_usage_stats': True, 'event_buffer_size': 100000, 'quiet': False, 'no_print': False, 'project_name': 'b_and_b', 'skip_profile_setup': False, 'which': 'init', 'indirect_selection': 'eager'}
+[0m17:45:17.669794 [debug] [MainThread]: Tracking: tracking
+[0m17:45:17.690973 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103dff2b0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103dff700>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103dff4c0>]}
+[0m17:45:17.691912 [info ] [MainThread]: A project called b_and_b already exists here.
+[0m17:45:17.692085 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103dff9d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103dff9a0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103dff700>]}
+[0m17:45:17.692284 [debug] [MainThread]: Flushing usage events

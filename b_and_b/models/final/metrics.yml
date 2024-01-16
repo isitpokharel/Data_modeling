@@ -1,0 +1,399 @@
+version: 2
+metrics:
+  - name: total_order_count
+    label: count_of_orders
+    model: ref('product_order')
+    description: "Count of Total Orders"
+
+    calculation_method: count_distinct
+    expression: order_id
+
+    timestamp: order_created_at
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - order_created_at
+      - product_category
+      - product_title
+      - product_variant_sku
+      - product_variant_title
+      - product_variant_style
+      - product_variant_size
+
+  - name: total_gross_revenue
+    label: total_gross_revenue
+    model: ref('product_order')
+    description: "Sum of total line item revenue minus sum of line item discounts"
+
+    calculation_method: sum
+    expression: line_item_gross_revenue
+
+    timestamp: order_created_at
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - order_created_at
+      - product_category
+      - product_title
+      - product_variant_sku
+      - product_variant_title
+      - product_variant_style
+      - product_variant_size
+
+  - name: total_order_units
+    label: total_order_units
+    model: ref('product_order')
+    description: "sum of order line item quantities"
+
+    calculation_method: sum
+    expression: line_item_quantity
+
+    timestamp: order_created_at
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - order_created_at
+      - product_category
+      - product_title
+      - product_variant_sku
+      - product_variant_title
+      - product_variant_style
+      - product_variant_size
+
+
+  - name: average_order_value
+    label: average_order_value
+    model: ref('product_order')
+    description: "Average of order subtotals"
+
+    calculation_method: average
+    expression: order_subtotal
+
+    timestamp: order_created_at
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - order_created_at
+      - product_category
+      - product_title
+      - product_variant_sku
+      - product_variant_title
+      - product_variant_style
+      - product_variant_size
+
+  - name: average_order_units
+    label: average order units
+    model: ref('product_order')
+    description: "Average of units per order"
+
+    calculation_method: average
+    expression: units_in_order
+
+    timestamp: order_created_at
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - order_created_at
+      - product_category
+      - product_title
+      - product_variant_sku
+      - product_variant_title
+      - product_variant_style
+      - product_variant_size
+
+  - name: total_pageviews
+    label: total page views 
+    model: ref('web_session_final')
+    description: "Total Page views ( count of page web events )"
+
+    calculation_method: count_distinct
+    expression: event_id
+
+    timestamp: event_created_at
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+    filters:
+      - field: is_page_view_event
+        operator: '='
+        value: '1'
+
+  - name: web_sessions
+    label: total web sessions
+    model: ref('web_session_final')
+    description: "count of web sessions, where a session is defined as a series of one or more web events committed by the same cookie with no more than a 30 minute gap between events. Any 30 minute gap indicates a new session."
+
+
+    calculation_method: count_distinct
+    expression: session_id
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+  - name: total_bounced_web_sessions
+    label: total bounced web sessions
+    model: ref('web_session_final')
+    description: "count of web sessions where total `page` events is less than or equal to 1"
+
+
+    calculation_method: count_distinct
+    expression: session_id
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+    filters:
+      - field: is_bounced_session
+        operator: '='
+        value: '1'
+
+  - name: total_web_users
+    label: total web users
+    model: ref('web_session_final')
+    description: "distinct count of users in web sessions, where a user is defined as the first known customer_id that is associated with the cookie of the web session. If the session user has no known customer_id then default to the cookie_id."
+
+    calculation_method: count_distinct
+    expression: web_user_id
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+  - name: bounce_rate
+    label: Bounce Rate
+    description: "Total Bounced Web Sessions divided by Total Web Sessions"
+
+
+    calculation_method: derived
+    expression: "{{metric('total_bounced_web_sessions')}} / {{ metric('web_sessions')}}"
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+  - name: total_product_view_sessions
+    label: total product view sessions
+    model: ref('web_session_final')
+    description: " total web sessions that include a product_viewed event"
+
+    calculation_method: count_distinct
+    expression: session_id
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+    filters:
+      - field: is_product_viewed_session
+        operator: '='
+        value: '1'
+
+  - name: product_view_rate
+    label: Product View Rate
+    description: "Total web sessions that include a `product_viewed` event divided by Total Web Sessions"
+
+
+    calculation_method: derived
+    expression: "{{ metric('total_product_view_sessions') }}/{{ metric('web_sessions')}} "
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+  - name: total_add_to_cart_sessions
+    label: total add to cart sessions
+    model: ref('web_session_final')
+    description: " total web sessions that include a prodcut_added event"
+
+    calculation_method: count_distinct
+    expression: session_id
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+    filters:
+      - field: product_added
+        operator: '='
+        value: '1'
+
+  - name: add_to_cart_rate
+    label: Add to cart rate
+    description: "Total web sessions that include a `product_addeded` event divided by Total Web Sessions"
+
+
+    calculation_method: derived
+    expression: "{{ metric('total_add_to_cart_sessions') }}/{{ metric('web_sessions')}}"
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+  - name: total_checkout_sessions
+    label: total checkout sessions
+    model: ref('web_session_final')
+    description: " total web sessions that include a checkout_step_viewed event"
+
+    calculation_method: count_distinct
+    expression: session_id
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+    filters:
+      - field: is_checkout_step_viewed_session
+        operator: '='
+        value: '1'
+
+  - name: checkout_rate
+    label: Checkout Rate
+    description: "Total web sessions that include a `checkout_step_viewed` event divided by Total Web Sessions"
+
+
+    calculation_method: derived
+    expression: "{{ metric('total_checkout_sessions') }}/{{ metric('web_sessions')}}"
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+  - name: total_email_sign_up_sessions
+    label: total email sign up sessions
+    model: ref('web_session_final')
+    description: " total web sessions that include a email_sign_up event"
+
+    calculation_method: count_distinct
+    expression: session_id
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+    filters:
+      - field: is_email_sign_up_session
+        operator: '='
+        value: '1'
+
+  - name: signup_rate
+    label: Sign Up Rate
+    description: "Total web sessions that include a `email_sign_up` event divided by Total Web Sessions"
+
+
+    calculation_method: derived
+    expression: "{{ metric('total_email_sign_up_sessions') }}/{{ metric('web_sessions')}}"
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+  - name: total_conversion_sessions
+    label: total conversion sessions
+    model: ref('web_session_final')
+    description: "total sessions where order_completed event was included"
+
+    calculation_method: count_distinct
+    expression: session_id
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign
+
+    filters:
+      - field: is_order_completed_order
+        operator: '='
+        value: '1'
+
+  - name: conversion_rate
+    label: Conversion Rate
+    description: "Total web sessions that include a `order_completed` event divided by Total Web Sessions"
+
+
+    calculation_method: derived
+    expression: "{{ metric('total_conversion_sessions') }}/{{ metric('web_sessions')}}"
+
+    timestamp: web_session_start_timestamp
+    time_grains: [day, week, month, all_time]
+
+    dimensions:
+      - web_session_start_timestamp
+      - session_landing_page_url
+      - session_first_utm_medium
+      - session_first_utm_source
+      - session_first_utm_campaign

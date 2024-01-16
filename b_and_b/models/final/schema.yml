@@ -1,0 +1,226 @@
+
+version: 2
+
+sources:
+  - name: raw
+    description: "source tables"
+    database: data-recruiting
+    schema: ae_data_challenge_v1
+    tables:
+      - name: orders
+      - name: products
+      - name: web_events
+
+models:
+- name: stg_orders
+  description: One record per line item associated to an order_id. Each row is unique based and identified by _id column that is created by combining fields order_id,line_item_id, created_at, product_id, and variant_id
+
+  columns:
+    - name: _id
+      description: unique row identifier created by combining fields order_id,line_item_id, created_at, product_id, and variant_id
+    - name: order_id
+      description: unique id identifying each order
+    - name: _loaded_at
+      description: timestamp of when record was loaded into source table
+    - name: created_at
+      description: timestamp of when order_id was initially created
+    - name: etl_loaded_at
+      description: timestamp of when the records was last loaded into the table  ( used for incremental strategy). 
+    - name: subtotal
+      description: The dollar sum of all line item amounts in an order id after discounts but before shipping, taxes, and tips (in USD)
+    - name: total
+      description: The dollar sum of all line item amounts, discounts, shipping, taxes, and tips (in USD)
+    - name: line_id
+      description: unique id for an item that belongs to a particualr order_id (multiple line items can be under one order_id)
+    - name: product_id
+      description: product_id associated to line_id (foreign key to join to produts table)
+    - name: variant_id
+      description: variant_id identifying a variant of a product (one product can have multiple variants associated to them) (foreign key to join to produts table)
+    - name: price
+      description: price of a line item in USD
+    - name: quantity 
+      description: number of items bought
+    - name: line_total_discount
+      description: total discount for a line_id in USD
+
+- name: stg_product
+  description: Each row is unique based and identified by _id column that is created by combining fields product_id,variant_id, and sku (stock keeping unit)
+
+  columns:
+    - name: _id
+      description: created by combining fields product_id,variant_id, and sku (stock keeping unit)
+    - name: product_id
+      description: unique id associated to a product 
+    - name: _loaded_at
+      description: timestamp of record loaded into the source table ( can be different from created_at )
+    - name: category
+      description: product category
+    - name: created_at
+      description: timestamp of inital record creation in source table.
+    - name: updated_at
+      description: timestamp of when record was last updated
+    - name: title
+      description: product title
+    - name: variant_id
+      description: one product_id can have multiple variant_ids associated with them. variant_ids are essentially product sub categories
+    - name: variant_sku
+      description: stock keep unit number. one-one relationship with variant_id
+    - name: variant_title
+      description: title of product subcategory
+    - name: variant_created_at
+      description: initial timestamp of when variant of created
+    - name: variant_updated_at
+      description: tomestamp of when record was last updated
+    - name: variant_option1
+      description: style of prodcut subcategory identified by variant_id
+    - name: variant_option2
+      description: size of prodcut subcategory identified by variant_id
+    - name: etl_loaded_at
+      description: timestamp of last time etl loaded records into this table ( used for incremental strategy)
+
+- name: product_order
+  description: fact table with created by joining stg_orders with stg_product using product_id and variant_id
+
+  columns:
+    - name: id
+      description: unique row identifier - created by  ombining fields order_id,line_item_id, created_at, product_id, and variant_id from stg_orders table
+    - name: order_id
+      description: unique id identifying each order
+    - name: order_created_at
+      description: timestamp of when an order (indicated by order_id) was initially created
+    - name: order_subtotal
+      description: The dollar sum of all line item amounts for a given order_id after discounts but before shipping, taxes, and tips (in USD)
+    - name: order_total
+      description: The dollar sum of all line item amounts, discounts, shipping, taxes, and tips (in USD) in a given order_id
+    - name: order_line_id
+      description: unique id for an item that belongs to a particualr order_id (multiple line_id can be associated to one order_id)
+    - name: product_id
+      description: product_id associated to line_id (foreign key to join to produts table)
+    - name: variant_id
+      description: variant_id identifying a variant of a product (one product can have multiple variants associated to them) (foreign key to join to produts table)
+    - name: line_item_price
+      description: price of a line item in USD
+    - name: line_item_quantity 
+      description: number of line_items bought 
+    - name: line_item_revenue 
+      description: price of line item * quantity of line item
+    - name: line_item_discount
+      description: total discount for a line item ( not per unit discount)
+    - name: units_in_order
+      description: sum of line_item_quantity for a given order_id
+    - name: line_item_gross_revenue
+      description: line_item_revenue - line_item_discount
+    - name: product_category
+      description: product category
+    - name: updated_at
+      description: timestamp of when record was last updated
+    - name: product_title
+      description: product title
+    - name: product_variant_sku
+      description: stock keep unit number. one-one relationship with variant_id
+    - name: product_variant_title
+      description: title of product subcategory
+    - name: product_variant_style
+      description: style of prodcut subcategory identified by variant_id
+    - name: product_variant_size
+      description: size of prodcut subcategory identified by variant_id
+    - name: previous_sync
+      description: timestamp of last time etl loaded records into this stg_orders table. 
+    - name: _timestamp
+      description: timestamp to indicate when this model was last run. In incremental load, only new records loaded after max(timestamp) of this table will be inserted & merged. 
+
+- name: stg_web_events_unique_session_id
+  description: fact table with events data from web sessions. 
+
+  columns:
+    - name: session_id
+      description: session_id associated to each web event_id. where a session is defined as a series of one or more web events committed by the same cookie with no more than a 30 minute gap between events. Any 30 minute gap indicates a new session.
+    - name: etl_loaded_at
+      description: timestamp of when a record was last loaded into this table. 
+    - name: event_id
+      description: unique identifier for an event
+    - name: _loaded_at
+      description: timestamp of when a record was loaded into the source table. 
+    - name: cookie_id 
+      description: Device identifier used to indicate a website visitor. For a new visitor, this value is set in the user browser cookies.
+    - name: customer_id
+      description: Unique identifier to indicate a customer. This value is null if the user is an anonymous web visitor
+    - name: event_name
+      description: Event name that indicates how user interacted with the website
+    - name: event_url
+      description: URL on which the event occurred
+    - name: event_properties
+      description: JSON string containing contextual properties relating to the event. product_viewed & product_added event_name return {"product_id":"XX"} and order_completed event_name returns {"order_id":"XXX"} all other event type retrun NULL
+    - name: timestamp 
+      description: timestamp to indicate when event occured 
+    - name: line_item_revenue 
+      description: price of line item * quantity of line item
+    - name: utm_campaign
+      description: Campaign that referred the user
+    - name: utm_medium
+      description: Medium that referred the user
+    - name: utm_source
+      description: Source that referred the user
+
+- name: web_session_final
+  description: fact table with events data from web sessions. 
+  
+  columns:
+    - name: session_id
+      description: session_id associated to each web event_id. where a session is defined as a series of one or more web events committed by the same cookie with no more than a 30 minute gap between events. Any 30 minute gap indicates a new session.
+    - name: etl_loaded_at
+      description: timestamp of when a record was last loaded into this table. 
+    - name: event_id
+      description: unique identifier for an event
+    - name: _loaded_at
+      description: timestamp of when a record was loaded into the source table. 
+    - name: cookie_id 
+      description: Device identifier used to indicate a website visitor. For a new visitor, this value is set in the user browser cookies.
+    - name: customer_id
+      description: Unique identifier to indicate a customer. This value is null if the user is an anonymous web visitor
+    - name: event_name
+      description: Event name that indicates how user interacted with the website
+    - name: event_url
+      description: URL on which the event occurred
+    - name: event_properties
+      description: JSON string containing contextual properties relating to the event. product_viewed & product_added event_name return {"product_id":"XX"} and order_completed event_name returns {"order_id":"XXX"} all other event type retrun NULL
+    - name: event_created_at 
+      description: timestamp to indicate when event occured 
+    - name: line_item_revenue 
+      description: price of line item * quantity of line item
+    - name: utm_campaign
+      description: Campaign that referred the user
+    - name: utm_medium
+      description: Medium that referred the user
+    - name: utm_source
+      description: Source that referred the user
+    - name: web_user_id
+      description: user_id is defined as the first known customer_id that is associated with the cookie of the web session. If the session user has no known customer_id then default to the cookie_id.
+    - name: is_page_view_event
+      description:  boolean field to indicate if an event is a page view event. ( 1 = page view event, 0 = not a page view event)
+    - name: is_bounced_session
+      description: boolean field to indicate if a session_id indicates a bounced session or not. 1 = bounced session , 0 = not a bounced session
+    - name: is_product_viewed_session
+      description: boolean field to indicate whether a session had at least one event with event_name = 'product_viewed'. 
+    - name: is_product_added_session
+      description: boolean field to indicate whether a session includes a  'product_added' event. 
+    - name: is_checkout_step_viewed_session
+      description: boolean field to indicate whether a session includes a  'checkout_step_viewed' event. 
+    - name: is_email_sign_up_session
+      description: boolean field to indicate whether a session includes a  'email_sign_up' event. 
+    - name: is_order_completed_order
+      description: boolean field to indicate whether a session includes a  'order_completed' event. 
+    - name: web_session_start_timestamp
+      description: web session start timestamp (event_created_timestamp for a first event in a given session_id), value will be same for all event_ids belonging to a particular session id
+    - name: session_landing_page_url
+      description: first event URL of a session. landing page of a first event that belongs to a given session_id
+    - name: session_first_utm_medium
+      description: first `utm_medium` of a session. utm_medium` of a first event that belongs to a given session_id
+    - name: session_first_utm_source
+      description: first `utm_source` of a session. utm_source` of a first event that belongs to a given session_id
+    - name: session_first_utm_campaign
+      description: first `utm_campaign` of a session. utm_campaign of a first event that belongs to a given session_id
+    - name: previous_sync
+      description: timestamp of last time etl loaded records into this stg_web_events_unique_session_id table. 
+    - name: etl_loaded_at
+      description: timestamp to indicate when this model was last run. In incremental load, only new records loaded after max(timestamp) of this table will be inserted & merged. 
