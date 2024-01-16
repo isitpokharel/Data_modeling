@@ -1,4 +1,7 @@
 
+### Please take a look at Proejct.pdf for overall description of the project. 
+
+
 ### Using the b_and_b project
 
 Try running the following commands:
@@ -15,6 +18,7 @@ Try running the following commands:
 
 
 ### INTRO TO MODEL
+
 
 There are two stage models which analysts won't require - stg_orders.sql and stg_products.
 Both models are set up as incremental models with merge incremental_stragey. 
